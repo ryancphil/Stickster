@@ -26,14 +26,14 @@ public class CameraFragment extends Fragment
         ((MainActivity)getActivity()).photo = bp;
 
         //((MainActivity)getActivity()).loadImage();
-        PhotoFragment photoFragment = new PhotoFragment();
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        //PhotoFragment photoFragment = new PhotoFragment();
+        //FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
         // Replace whatever is in the fragment_container view with this fragment,
-        fragmentTransaction.add(R.id.frag_content, photoFragment);
+        //fragmentTransaction.add(R.id.frag_content, photoFragment);
 
         // Commit the transaction
-        fragmentTransaction.commit();
+        //fragmentTransaction.commit();
     }
 
     @Override
