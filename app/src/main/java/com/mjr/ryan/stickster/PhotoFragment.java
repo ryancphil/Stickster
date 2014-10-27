@@ -2,6 +2,7 @@ package com.mjr.ryan.stickster;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,8 +40,8 @@ public class PhotoFragment extends Fragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //super.onViewCreated(view, savedInstanceState);
 
-        Bitmap bp = ((MainActivity)getActivity()).photo;
         imgPhoto = (ImageView)getView().findViewById(R.id.photoCanvas);
-        imgPhoto.setImageBitmap(bp);
+
+        imgPhoto.setImageBitmap(((MainActivity)getActivity()).photo);
     }
 }

@@ -2,16 +2,27 @@ package com.mjr.ryan.stickster;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 
 public class MainActivity extends Activity {
-
+    private static final int TAKE_PHOTO_CODE = 1;
+    ExifInterface exif;
     Bitmap photo;
 
     @Override
@@ -19,8 +30,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 0);
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(this)) );
+        startActivityForResult(intent, TAKE_PHOTO_CODE);
 
     }
 
@@ -28,13 +40,48 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
-        photo = (Bitmap) data.getExtras().get("data");
+
+        if (resultCode == RESULT_OK) {
+            switch(requestCode){
+                case TAKE_PHOTO_CODE:
+                    final File file = getTempFile(this);
+                    try {
+                        photo = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(file));
+                        photo = Bitmap.createScaledBitmap(photo, 1920, 1080, false);
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(90);
+                        photo = Bitmap.createBitmap(photo, 0, 0, photo.getWidth(), photo.getHeight(), matrix, true);
+                        // do whatever you want with the bitmap (Resize, Rename, Add To Gallery, etc)
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
 
         PhotoFragment photoFragment = new PhotoFragment();
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.frag_content, photoFragment);
         fragmentTransaction.commit();
+    }
+
+    private File getTempFile(Context context){
+        //it will return /sdcard/image.tmp
+        final File path = new File( Environment.getExternalStorageDirectory(), context.getPackageName() );
+        if(!path.exists()){
+            path.mkdir();
+        }
+        return new File(path, "image.tmp");
+    }
+
+    private static int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) { return 90; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {  return 180; }
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {  return 270; }
+        return 0;
     }
 
 }
