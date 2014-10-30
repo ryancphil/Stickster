@@ -25,23 +25,19 @@ public class PhotoFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
-
         return rootView;
     }
-
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //super.onViewCreated(view, savedInstanceState);
 
         imgPhoto = (ImageView)getView().findViewById(R.id.photoCanvas);
-
         imgPhoto.setImageBitmap(((MainActivity)getActivity()).photo);
     }
 }

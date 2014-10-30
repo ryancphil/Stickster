@@ -4,28 +4,9 @@
     android:layout_height="match_parent"
     tools:context=".PrePhotoActivity">
 
-    <!--<FrameLayout-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:id="@+id/frag_content"/>-->
-
-
-        <FrameLayout
-            android:id="@+id/camera_preview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-
-        <Button
-            android:id="@+id/button_capture"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:onClick="snapIt"
-            android:text="Capture" />
-
-    <ImageView
-        android:id="@+id/imageView1"
+    <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scaleType="fitXY" />
+        android:id="@+id/frag_content"/>
 
 </RelativeLayout>
