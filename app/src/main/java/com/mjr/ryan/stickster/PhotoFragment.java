@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
@@ -25,6 +27,8 @@ public class PhotoFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -35,9 +39,71 @@ public class PhotoFragment extends Fragment{
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        //super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState);
 
         imgPhoto = (ImageView)getView().findViewById(R.id.photoCanvas);
         imgPhoto.setImageBitmap(((MainActivity)getActivity()).photo);
+
+        //Implement button for test_sticker
+        ImageButton launcher = (ImageButton) getView().findViewById(R.id.launcher);
+        launcher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("launcher", "launcher");
+            }
+        });
+
+        //Implement button for lightsaber
+        ImageButton lightsaber = (ImageButton) getView().findViewById(R.id.lightsaber);
+        lightsaber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("lightsaber", "lightsaber");
+            }
+        });
+
+        //Implement button for monocle
+        ImageButton monocle = (ImageButton) getView().findViewById(R.id.monocle);
+        monocle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("monocle", "monocle");
+            }
+        });
+
+        //Implement button for sandwich
+        ImageButton sandwich = (ImageButton) getView().findViewById(R.id.sandwich);
+        sandwich.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("sandwich", "sandwich");
+            }
+        });
+
+        //Implement button for football
+        ImageButton football = (ImageButton) getView().findViewById(R.id.football);
+        football.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("football", "football");
+            }
+        });
+
+        //Implement button for soccerball
+        ImageButton soccerball = (ImageButton) getView().findViewById(R.id.soccerball);
+        soccerball.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("soccerball", "soccerball");
+            }
+        });
     }
 }
+
+
