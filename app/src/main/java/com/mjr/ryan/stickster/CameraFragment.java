@@ -1,41 +1,175 @@
 package com.mjr.ryan.stickster;
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-/**
- * Created by Ryan on 10/4/2014.
- * This fragment should start the camera. This fragment is inflated in the onCreate method in the main activity
- */
-public class CameraFragment extends Fragment
-{
-    private Camera cameraObject;
-    private ShowCamera showCamera;
+import com.mjr.ryan.stickster.R;
 
-    public static Camera isCameraAvailable(){
-        Camera object = null;
-        try {
-            object = Camera.open();
-        }
-        catch (Exception e){
-        }
-        return object;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+public class CameraFragment extends Fragment {
+
+    // Native camera.
+    private Camera mCamera;
+
+    // View to display the camera output.
+    private CameraPreview mPreview;
+
+    // Reference to the containing view.
+    private View mCameraView;
+
+    /**
+     * Default empty constructor.
+     */
+    public CameraFragment(){
+        super();
     }
 
-    private Camera.PictureCallback capturedIt = new Camera.PictureCallback() {
+    /**
+     * Static factory method
+     * @param sectionNumber
+     * @return
+     */
+    public static CameraFragment newInstance(int sectionNumber) {
+        CameraFragment fragment = new CameraFragment();
+        Bundle args = new Bundle();
+        args.putInt("ARG_SECTION_NUMBER", sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    /**
+     * OnCreateView fragment override
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+
+        // Trap the capture button.
+        Button captureButton = (Button) view.findViewById(R.id.button_capture);
+        captureButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // get an image from the camera
+                        mCamera.takePicture(null, null, mPicture);
+                    }
+                }
+        );
+
+        return view;
+    }
+
+    /**
+     * Recommended "safe" way to open the camera.
+     * @param view
+     * @return
+     */
+    private boolean safeCameraOpenInView(View view) {
+        boolean qOpened = false;
+        releaseCameraAndPreview();
+        mCamera = getCameraInstance();
+        mCameraView = view;
+        qOpened = (mCamera != null);
+
+        if(qOpened == true){
+            mPreview = new CameraPreview(getActivity().getBaseContext(), mCamera, getView());
+            FrameLayout preview = (FrameLayout) getView().findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
+            mPreview.startCameraPreview();
+        }
+        return qOpened;
+    }
+
+    /**
+     * Safe method for getting a camera instance.
+     * @return
+     */
+    public static Camera getCameraInstance(){
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return c; // returns null if camera is unavailable
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseCameraAndPreview();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseCameraAndPreview();
+    }
+
+    /**
+     * Clear any existing preview / camera.
+     */
+    private void releaseCameraAndPreview() {
+
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.setPreviewCallback(null);
+            mPreview.getHolder().removeCallback(mPreview);
+            mCamera.release();
+            mCamera = null;
+        }
+        if(mPreview != null){
+            mPreview.destroyDrawingCache();
+            mPreview.mCamera = null;
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        boolean opened = safeCameraOpenInView(null);
+
+        if(opened == false){
+            Log.d("CameraGuide","Error, Camera failed to open");
+        }
+    }
+
+    /**
+     * Picture Callback for handling a picture capture and saving it out to a file.
+     */
+    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
@@ -56,63 +190,40 @@ public class CameraFragment extends Fragment
             {
                 Toast.makeText((getActivity()).getApplicationContext(), "taken", Toast.LENGTH_SHORT).show();
             }
-            cameraObject.release();
+            //cameraObject.release();
             PhotoFragment photoFragment = new PhotoFragment();
 
             getFragmentManager().beginTransaction()
-                                .replace(R.id.frag_content, photoFragment)
-                                .addToBackStack(null)
-                                .commit();
+                    .replace(R.id.frag_content, photoFragment)
+                    .addToBackStack(null)
+                    .commit();
         }
     };
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.fragment_camera);
-
-
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
-
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        cameraObject = isCameraAvailable();
-        showCamera = new ShowCamera(getActivity(), cameraObject);
-        FrameLayout preview = (FrameLayout) getView().findViewById(R.id.camera_preview);
-        preview.addView(showCamera);
-
-
-        Button captureButton = (Button) getView().findViewById(R.id.button_capture);
-        captureButton.bringToFront();
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // get an image from the camera
-                        cameraObject.takePicture(null, null, capturedIt);
-                    }
-                }
-        );
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
+    /**
+     * Used to return the camera File output.
+     * @return
+     */
+//    private File getOutputMediaFile(){
+//
+//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_PICTURES), "UltimateCameraGuideApp");
+//
+//        if (! mediaStorageDir.exists()){
+//            if (! mediaStorageDir.mkdirs()){
+//                Log.d("Camera Guide", "Required media storage does not exist");
+//                return null;
+//            }
+//        }
+//
+//        // Create a media file name
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        File mediaFile;
+//        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+//                "IMG_"+ timeStamp + ".jpg");
+//
+//        DialogHelper.showDialog( "Success!","Your picture has been saved!",getActivity());
+//
+//        return mediaFile;
+//    }
 }
