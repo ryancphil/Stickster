@@ -2,6 +2,8 @@ package com.mjr.ryan.stickster;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,8 +43,13 @@ public class PhotoFragment extends Fragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        imgPhoto = (ImageView)getView().findViewById(R.id.photoCanvas);
-        imgPhoto.setImageBitmap(((MainActivity)getActivity()).photo);
+        final CanvasView canvasView = new CanvasView(this.getActivity());
+        canvasView.invalidate();
+
+//        imgPhoto = (ImageView)getView().findViewById(R.id.photoCanvas);
+//        imgPhoto.setImageBitmap(((MainActivity)getActivity()).photo);
+
+
 
         //Implement button for test_sticker
         ImageButton launcher = (ImageButton) getView().findViewById(R.id.launcher);
@@ -51,6 +58,7 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("launcher", "launcher");
+
             }
         });
 

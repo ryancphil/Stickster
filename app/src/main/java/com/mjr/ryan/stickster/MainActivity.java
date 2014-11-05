@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
     public Bitmap photo;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +50,9 @@ public class MainActivity extends Activity {
 
 
 
+    public Bitmap getPhoto(){
+        return this.photo;
+    }
 
     private File getTempFile(Context context){
         //it will return /sdcard/image.tmp

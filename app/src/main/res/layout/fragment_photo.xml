@@ -4,10 +4,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/photoCanvas"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!--<ImageView-->
+        <!--android:id="@+id/photoCanvas"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
+
+    <com.mjr.ryan.stickster.CanvasView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/canvasView"/>
+
 
     <SlidingDrawer
         android:layout_width="fill_parent"
