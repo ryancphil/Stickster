@@ -100,7 +100,6 @@ public class CameraFragment extends Fragment {
         mCamera = getCameraInstance();
         mCameraView = view;
         qOpened = (mCamera != null);
-
         if(qOpened == true){
             mPreview = new CameraPreview(getActivity().getBaseContext(), mCamera, getView());
             FrameLayout preview = (FrameLayout) getView().findViewById(R.id.camera_preview);
@@ -160,7 +159,6 @@ public class CameraFragment extends Fragment {
     public void onResume() {
         super.onResume();
         boolean opened = safeCameraOpenInView(null);
-
         if(opened == false){
             Log.d("CameraGuide","Error, Camera failed to open");
         }
@@ -175,14 +173,22 @@ public class CameraFragment extends Fragment {
         public void onPictureTaken(byte[] data, Camera camera) {
 
             Bitmap bp = BitmapFactory.decodeByteArray(data, 0, data.length);
-            //photo = Bitmap.createScaledBitmap(photo, 1920, 1080, false);
+
+            Log.e("PictureDimensions", "Picture Height: " + bp.getHeight() + "\tWidth: " + bp.getWidth());
+
+            WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            bp = Bitmap.createScaledBitmap(bp, display.getHeight(), display.getWidth(), false);
+
             Matrix matrix = new Matrix();
             if (bp.getHeight() < bp.getWidth()) {
                 matrix.postRotate(90);
             }
             else
                 matrix.postRotate(0);
+
             ((MainActivity)getActivity()).photo = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(), bp.getHeight(), matrix, true);
+
             if(bp==null){
                 Toast.makeText((getActivity()).getApplicationContext(), "not taken", Toast.LENGTH_SHORT).show();
             }
