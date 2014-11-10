@@ -30,6 +30,7 @@ public class CanvasView extends View {
     int index;
 
     private float scaleFactor = 1.0f;
+    private int degrees = 0;
     private ScaleGestureDetector scaleGestureDetector;
 
     //Keeping track of bitmaps being drawn
@@ -109,10 +110,21 @@ public class CanvasView extends View {
                     if(getIntersectionRectIndex(touchDown) != -1 ) {
                         moveBitmap(touchDown, selectedBitmap);
                     }
+
+                    int numPointers = event.getPointerCount();
+                    for(int i = 0; i < numPointers; i++){
+                        if(i == 1){
+                            float dx = touchDown.x - event.getX(i);
+                            float dy = touchDown.y - event.getY(i);
+
+                            //This code rotates based on location of second finger around the bitmap
+                            degrees = 4 * (int) (Math.toDegrees(Math.atan2(dy, dx)));
+                        }
+                    }
                     invalidate();
+
                     break;
                 case MotionEvent.ACTION_POINTER_DOWN:
-
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
                     break;
@@ -175,8 +187,18 @@ public class CanvasView extends View {
         }
     }
 
+    private void rotateBitmap(int degrees, BitmapTriple bitmap){
+        Matrix matrix = new Matrix();
+
+        matrix.postRotate(degrees);
+
+        bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), matrix, true);
+//        bitmap.orig = Bitmap.createBitmap(bitmap.orig, 0, 0, bitmap.orig.getWidth(), bitmap.orig.getHeight(), matrix, true);
+    }
+
     private class ScaleListener extends
             ScaleGestureDetector.SimpleOnScaleGestureListener {
+
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scaleFactor *= detector.getScaleFactor();
@@ -185,6 +207,7 @@ public class CanvasView extends View {
             scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
             if(selectedBitmap != null) {
                 selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
+                rotateBitmap(degrees,selectedBitmap);
             }
             invalidate();
             return true;
