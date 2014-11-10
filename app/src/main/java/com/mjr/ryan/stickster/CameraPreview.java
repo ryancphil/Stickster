@@ -182,7 +182,7 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
             int previewWidth = width;
             int previewHeight = height;
 
-            if (mPreviewSize != null){
+            if (mPreviewSize != null && mCamera != null){
                 Display display = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
                 switch (display.getRotation())

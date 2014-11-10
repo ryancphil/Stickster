@@ -1,11 +1,13 @@
 package com.mjr.ryan.stickster;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +21,19 @@ import android.widget.ImageView;
  * this fragment should get inflated when a photo is selected or taken by replacing the CameraFragment in the framelayout
  */
 public class PhotoFragment extends Fragment{
-    ImageView imgPhoto;
+
+    CanvasView canvasView;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.e("PhotoFragment", "onActivityCreated");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("PhotoFragment", "onCreate");
 
 
     }
@@ -36,20 +41,17 @@ public class PhotoFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
+        Log.e("PhotoFragment", "onCreateView");
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        final CanvasView canvasView = new CanvasView(this.getActivity());
+        Log.e("PhotoFragment", "onViewCreated");
+        final Context context = this.getActivity();
+        canvasView = (CanvasView)this.getActivity().findViewById(R.id.canvasView);
         canvasView.invalidate();
-
-//        imgPhoto = (ImageView)getView().findViewById(R.id.photoCanvas);
-//        imgPhoto.setImageBitmap(((MainActivity)getActivity()).photo);
-
-
 
         //Implement button for test_sticker
         ImageButton launcher = (ImageButton) getView().findViewById(R.id.launcher);
@@ -58,7 +60,10 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("launcher", "launcher");
-
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+                BitmapTriple bitmapTriple = new BitmapTriple(bitmap);
+                canvasView.mItemsCollection.add(bitmapTriple);
+                canvasView.invalidate();
             }
         });
 
@@ -69,6 +74,10 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("lightsaber", "lightsaber");
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.lightsaber);
+                BitmapTriple bitmapTriple = new BitmapTriple(bitmap);
+                canvasView.mItemsCollection.add(bitmapTriple);
+                canvasView.invalidate();
             }
         });
 
@@ -79,6 +88,10 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("monocle", "monocle");
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.monocle);
+                BitmapTriple bitmapTriple = new BitmapTriple(bitmap);
+                canvasView.mItemsCollection.add(bitmapTriple);
+                canvasView.invalidate();
             }
         });
 
@@ -89,6 +102,10 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("sandwich", "sandwich");
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.sandwich);
+                BitmapTriple bitmapTriple = new BitmapTriple(bitmap);
+                canvasView.mItemsCollection.add(bitmapTriple);
+                canvasView.invalidate();
             }
         });
 
@@ -99,6 +116,10 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("football", "football");
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.football);
+                BitmapTriple bitmapTriple = new BitmapTriple(bitmap);
+                canvasView.mItemsCollection.add(bitmapTriple);
+                canvasView.invalidate();
             }
         });
 
@@ -109,8 +130,59 @@ public class PhotoFragment extends Fragment{
             public void onClick(View v) {
                 //Add imageview to fragment dynamically
                 Log.e("soccerball", "soccerball");
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.soccerball);
+                BitmapTriple bitmapTriple = new BitmapTriple(bitmap);
+                canvasView.mItemsCollection.add(bitmapTriple);
+                canvasView.invalidate();
             }
         });
+
+        //Implement button for delete
+        Button delete = (Button) getView().findViewById(R.id.delete);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("delete", "delete");
+                if(canvasView.mItemsCollection.size() > 0 && canvasView.selectedBitmap != null) {
+                    int selectedIndex = canvasView.mItemsCollection.indexOf(canvasView.selectedBitmap);
+                    canvasView.mItemsCollection.remove(selectedIndex);
+                }
+                canvasView.invalidate();
+            }
+        });
+
+        Button flip = (Button) getView().findViewById(R.id.flip);
+        flip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("flip", "flip");
+                if(canvasView.selectedBitmap != null) {
+                    Matrix m = new Matrix();
+                    m.preScale(-1, 1);
+                    Bitmap src = canvasView.selectedBitmap.bitmap;
+                    Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, false);
+                    dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+                    canvasView.selectedBitmap.bitmap = dst;
+
+                    //flip origin image as well for scaling
+                    Bitmap src2 = canvasView.selectedBitmap.orig;
+                    Bitmap dst2 = Bitmap.createBitmap(src2, 0, 0, src2.getWidth(), src2.getHeight(), m, false);
+                    dst2.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+                    canvasView.selectedBitmap.orig = dst2;
+
+                    canvasView.invalidate();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e("PhotoFragment", "onDestroy");
+        canvasView.destroyDrawingCache();
     }
 }
 
