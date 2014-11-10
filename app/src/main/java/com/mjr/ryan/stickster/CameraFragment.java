@@ -119,14 +119,18 @@ public class CameraFragment extends Fragment {
             WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
             Display display = wm.getDefaultDisplay();
             Bitmap bp = BitmapFactory.decodeFile(tempPath, btmapOptions);
-            bp = Bitmap.createScaledBitmap(bp, display.getHeight(), display.getWidth(), false);
-
             Matrix matrix = new Matrix();
             if (bp.getHeight() < bp.getWidth()) {
                 matrix.postRotate(90);
+                bp = Bitmap.createScaledBitmap(bp, display.getHeight(), display.getWidth(), false);
             }
-            else
+            else {
                 matrix.postRotate(0);
+                bp = Bitmap.createScaledBitmap(bp, display.getWidth(), display.getHeight(), false);
+            }
+
+
+
 
             ((MainActivity)getActivity()).photo = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(), bp.getHeight(), matrix, true);
 
