@@ -33,13 +33,14 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Gallery"
-            android:layout_gravity="right"
-            android:layout_alignTop="@+id/button_capture"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:text="Gallery" />
 
-
+        <Button
+            android:id="@+id/button_flash"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Auto" />
 
     </LinearLayout>
 

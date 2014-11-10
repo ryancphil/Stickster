@@ -87,6 +87,20 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         requestLayout();
     }
 
+    public void setFlash(int mode) {
+        Camera.Parameters parameters = mCamera.getParameters();
+        if (mode == 0) {
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+        }
+        else if (mode == 1) {
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        }
+        else if (mode == 2) {
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+        }
+        mCamera.setParameters(parameters);
+    }
+
     /**
      * The Surface has been created, now tell the camera where to draw the preview.
      * @param holder

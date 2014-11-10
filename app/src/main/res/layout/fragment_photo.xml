@@ -49,9 +49,6 @@
             android:id="@+id/handle"
 
             android:text="Stickers!"/>
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -114,7 +111,6 @@
                             android:id="@+id/sandwich"/>
                     </TableRow>
             </TableLayout>
-        </ScrollView>
     </SlidingDrawer>
 
 </RelativeLayout>

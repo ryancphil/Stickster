@@ -105,7 +105,55 @@ public class CameraFragment extends Fragment {
                 }
         );
 
+        final Button flashButton = (Button) view.findViewById(R.id.button_flash);
+        flashButton.setTag(0);
+        flashButton.setText("Auto");
+        flashButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final int status =(Integer) v.getTag();
+                        if(status == 0) {
+                            flashButton.setText("Off");
+                            mPreview.setFlash(1);
+                            v.setTag(1);
+                        }
+                        else if (status == 1){
+                            flashButton.setText("On");
+                            mPreview.setFlash(2);
+                            v.setTag(2);
+                        }
+                        else if (status == 2){
+                            flashButton.setText("Auto");
+                            mPreview.setFlash(0);
+                            v.setTag(0);
+                        }
+
+                    }
+                }
+        );
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        boolean opened = safeCameraOpenInView(null);
+        if(opened == false){
+            Log.d("CameraGuide","Error, Camera failed to open");
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseCameraAndPreview();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseCameraAndPreview();
     }
 
     @Override
@@ -186,18 +234,6 @@ public class CameraFragment extends Fragment {
         return c; // returns null if camera is unavailable
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        releaseCameraAndPreview();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releaseCameraAndPreview();
-    }
-
     /**
      * Clear any existing preview / camera.
      */
@@ -213,16 +249,6 @@ public class CameraFragment extends Fragment {
         if(mPreview != null){
             mPreview.destroyDrawingCache();
             mPreview.mCamera = null;
-        }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        boolean opened = safeCameraOpenInView(null);
-        if(opened == false){
-            Log.d("CameraGuide","Error, Camera failed to open");
         }
     }
 
@@ -268,30 +294,4 @@ public class CameraFragment extends Fragment {
         }
     };
 
-    /**
-     * Used to return the camera File output.
-     * @return
-     */
-//    private File getOutputMediaFile(){
-//
-//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_PICTURES), "UltimateCameraGuideApp");
-//
-//        if (! mediaStorageDir.exists()){
-//            if (! mediaStorageDir.mkdirs()){
-//                Log.d("Camera Guide", "Required media storage does not exist");
-//                return null;
-//            }
-//        }
-//
-//        // Create a media file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        File mediaFile;
-//        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-//                "IMG_"+ timeStamp + ".jpg");
-//
-//        DialogHelper.showDialog( "Success!","Your picture has been saved!",getActivity());
-//
-//        return mediaFile;
-//    }
 }
