@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -12,9 +13,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Ryan on 11/5/2014.
@@ -23,46 +27,43 @@ public class CanvasView extends View {
     Paint paint;
     Canvas canvas;
     Context context;
+    int index;
+
+    private float scaleFactor = 1.0f;
+    private ScaleGestureDetector scaleGestureDetector;
 
     //Keeping track of bitmaps being drawn
-    private ArrayList<Bitmap> mItemsCollection;
-    private ArrayList<Point> mActiveDragPoints;
-    private ArrayList<Bitmap> mActiveRects;
-    int x_pos = 250;
-    int y_pos = 250;
+    public ArrayList<BitmapTriple> mItemsCollection;
+    public ArrayList<Point> mActiveDragPoints;
+    public BitmapTriple selectedBitmap;
 
     public CanvasView(Context context) {
         super(context);
         this.context = context;
+        Log.e("tag", "FIRST CONSTRUCTOR");
         init();
     }
 
     public CanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        Log.e("tag", "SECOND CONSTRUCTOR");
         init();
     }
 
     public CanvasView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
+        Log.e("tag", "THIRD CONSTRUCTOR");
         init();
-
     }
 
     public void init() {
+        mActiveDragPoints = new ArrayList<Point>();
+        mItemsCollection = new ArrayList<BitmapTriple>();
 
-        mActiveRects = new ArrayList<Bitmap>(1);
-        mActiveDragPoints = new ArrayList<Point>(1);
-        mItemsCollection = new ArrayList<Bitmap>();
-
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
-        mItemsCollection.add(bitmap);
-//        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.football);
-//        mItemsCollection.add(bitmap);
-//        BitmapFactory.decodeResource(context.getResources(), R.drawable.monocle);
-//        mItemsCollection.add(bitmap);
-
+        scaleGestureDetector = new ScaleGestureDetector(context,
+                new ScaleListener());
 
         paint = new Paint();
         canvas = new Canvas();
@@ -70,111 +71,94 @@ public class CanvasView extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.RED);
 
-        this.setBackground(new BitmapDrawable(getResources(), (Bitmap) null));
-
-        Log.e("INIT", "INIT CALLED HERE!");
+        //this.setBackground(new BitmapDrawable(getResources(), (Bitmap) null));
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        canvas.save();
+        //Draw the background
         canvas.drawBitmap(((MainActivity) context).photo, 0, 0, paint);
-        //Below code needs to be modified to be called on button presses
-//        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-//        canvas.drawBitmap(image, 100, 250, paint);
-        Log.e("df", "AHHHHHHH");
-
-        //canvas.drawColor(Color.BLUE, PorterDuff.Mode.CLEAR);
-        for (Bitmap bitmap : mItemsCollection) {
-            canvas.drawBitmap(bitmap, x_pos, y_pos, paint);
+        //Draw all bitmaps inside the mItemsCollection array
+        for (BitmapTriple bitmap : mItemsCollection) {
+            //Draw the center of the bitmap at the user's finger
+            canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
         }
+        canvas.restore();
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        //action is the type of action on the screen UP, DOWN, ect.
         final int action = event.getActionMasked();
-        final int pointer = event.getActionIndex();
+        try {
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    Point touchDown = new Point((int) event.getX(), (int) event.getY());
+                    lookForIntersection(touchDown);
 
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                Point touchDown = new Point((int) event.getX(), (int) event.getY());
-                lookForIntersection(touchDown);
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                mActiveDragPoints.removeAll(mActiveDragPoints);
-                mActiveRects.removeAll(mActiveRects);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int count = 0;
-                for (Bitmap bitmap : mActiveRects) {
-                    Point currentPoint = new Point((int) event.getX(count), (int) event.getY(count));
-                    moveRect(currentPoint, mActiveDragPoints.get(count), bitmap);
-                    count++;
-                }
-                Log.d(getClass().getName(), "Active Rects" + mActiveRects.size());
-                Log.d(getClass().getName(), "Active Points" + mActiveDragPoints.size());
-                invalidate();
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                touchDown = new Point((int) event.getX(pointer), (int) event.getY(pointer));
-                lookForIntersection(touchDown);
-                //Log.d(getClass().getName(), "ACTION_POINTER_DOWN" + pointer);
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                int index = getIntersectionRectIndex(new Point((int) event.getX(pointer), (int) event.getY(pointer)));
-                if (index != (-1)) {
-                    Bitmap bitmap = mItemsCollection.get(index);
-                    mActiveDragPoints.remove(mActiveRects.indexOf(bitmap));
-                    mActiveRects.remove(bitmap);
-                }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    //selectedBitmap = null;
+                case MotionEvent.ACTION_CANCEL:
+                    mActiveDragPoints.removeAll(mActiveDragPoints);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    touchDown = new Point((int) event.getX(), (int) event.getY());
+                    if(getIntersectionRectIndex(touchDown) != -1 ) {
+                        moveBitmap(touchDown, selectedBitmap);
+                    }
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
 
-                break;
-
-            default:
-                break;
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    break;
+                default:
+                    break;
+            }
+        }catch(IllegalArgumentException e){
+            e.printStackTrace();
+        }catch(ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
         }
+
+        scaleGestureDetector.onTouchEvent(event);
         return true;
     }
 
     private void lookForIntersection(Point touchDown)
     {
-        final int index = getIntersectionRectIndex(touchDown);
-
+        //This method checks if the touch is over a bitmap on the canvas
+        index = getIntersectionRectIndex(touchDown);
         if( index != -1 )
         {
-            final Bitmap bitmap = mItemsCollection.get(index);
-            if( mActiveRects.indexOf(bitmap) == -1 )
-            {
-                mActiveDragPoints.add(touchDown);
-                mActiveRects.add(mItemsCollection.get(index));
-            }
+            mActiveDragPoints.add(touchDown);
+            selectedBitmap = mItemsCollection.get(index);
+            //lastSelected = selectedBitmap;
         }
-        Log.d(getClass().getName(), "Active Rects" + mActiveRects.size());
-        Log.d(getClass().getName(), "Active Points" + mActiveDragPoints.size());
-
     }
-
-
-
 
     private int getIntersectionRectIndex(final Point point)
     {
         int index = -1;
-        int topParam;
-        int rightParam;
-        int maxTopParam;
-        int maxRightParam;
-        for(Bitmap bitmap : mItemsCollection)
-        {
-            topParam =  x_pos;
-            rightParam =  y_pos;
-            maxTopParam = topParam + bitmap.getHeight();
-            maxRightParam = rightParam + bitmap.getWidth();
+        int leftX;
+        int topY;
+        int rightX;
+        int bottomY;
 
-            if( point.x > topParam && point.x < maxTopParam && point.y > rightParam && point.y < maxRightParam)
+        //iterate backwards to grab the bitmap on TOP
+        for(int i = mItemsCollection.size()-1; i>= 0; i--)
+        {
+            BitmapTriple bitmap = mItemsCollection.get(i);
+            leftX =  bitmap.x_position - (bitmap.bitmap.getWidth()/2);
+            topY =  bitmap.y_position - (bitmap.bitmap.getHeight()/2);
+            rightX = leftX + bitmap.bitmap.getWidth();
+            bottomY = topY + bitmap.bitmap.getHeight();
+
+            if( point.x > leftX && point.x < rightX && point.y > topY && point.y < bottomY)
             {
                 index = mItemsCollection.indexOf(bitmap);
                 break;
@@ -183,13 +167,27 @@ public class CanvasView extends View {
         return index;
     }
 
-    private void moveRect(Point currentPoint, Point prevPoint, final Bitmap bitmap)
+    private void moveBitmap(Point currentPoint, final BitmapTriple bitmap)
     {
-        int xMoved = currentPoint.x - prevPoint.x;
-        int yMoved = currentPoint.y - prevPoint.y;
-        x_pos = currentPoint.x;
-        y_pos = currentPoint.y;
-        mActiveDragPoints.set(mActiveDragPoints.indexOf(prevPoint), currentPoint);
+        if(bitmap != null) {
+            bitmap.x_position = currentPoint.x;
+            bitmap.y_position = currentPoint.y;
+        }
     }
 
+    private class ScaleListener extends
+            ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+
+            // don't let the object get too small or too large.
+            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
+            if(selectedBitmap != null) {
+                selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
+            }
+            invalidate();
+            return true;
+        }
+    }
 }
