@@ -47,69 +47,74 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/handle"
+
             android:text="Stickers!"/>
-
-        <TableLayout
+        <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/content"
-            android:orientation="vertical">
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight=".5"
-                        android:contentDescription="launcher"
-                        android:background="@drawable/ic_launcher"
-                        android:id="@+id/launcher"/>
+            android:layout_height="fill_parent">
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/content"
+                android:orientation="vertical"
+                android:background="#80E6E6E6">
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="launcher"
+                            android:background="@drawable/ic_launcher"
+                            android:id="@+id/launcher"/>
 
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight=".5"
-                        android:contentDescription="lightsaber"
-                        android:background="@drawable/lightsaber"
-                        android:id="@+id/lightsaber"/>
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="lightsaber"
+                            android:background="@drawable/lightsaber"
+                            android:id="@+id/lightsaber"/>
 
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight=".5"
-                        android:contentDescription="monocle"
-                        android:background="@drawable/monocle"
-                        android:id="@+id/monocle"/>
-                </TableRow>
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="monocle"
+                            android:background="@drawable/monocle"
+                            android:id="@+id/monocle"/>
+                    </TableRow>
 
-                <TableRow
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight=".5"
-                        android:contentDescription="football"
-                        android:background="@drawable/football"
-                        android:id="@+id/football"/>
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="football"
+                            android:background="@drawable/football"
+                            android:id="@+id/football"/>
 
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight=".5"
-                        android:contentDescription="soccerball"
-                        android:background="@drawable/soccerball"
-                        android:id="@+id/soccerball"/>
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="soccerball"
+                            android:background="@drawable/soccerball"
+                            android:id="@+id/soccerball"/>
 
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight=".5"
-                        android:contentDescription="sandwich"
-                        android:background="@drawable/sandwich"
-                        android:id="@+id/sandwich"/>
-                </TableRow>
-        </TableLayout>
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="sandwich"
+                            android:background="@drawable/sandwich"
+                            android:id="@+id/sandwich"/>
+                    </TableRow>
+            </TableLayout>
+        </ScrollView>
     </SlidingDrawer>
 
 </RelativeLayout>
