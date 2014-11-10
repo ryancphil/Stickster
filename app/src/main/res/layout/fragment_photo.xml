@@ -14,6 +14,25 @@
         android:layout_height="wrap_content"
         android:id="@+id/canvasView"/>
 
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"/>
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/flip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Flip"/>
 
     <SlidingDrawer
         android:layout_width="fill_parent"
@@ -92,17 +111,5 @@
                 </TableRow>
         </TableLayout>
     </SlidingDrawer>
-
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete"/>
-    <Button
-        android:id="@+id/flip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:text="Flip"/>
 
 </RelativeLayout>

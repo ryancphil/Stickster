@@ -1,6 +1,9 @@
 package com.mjr.ryan.stickster;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * Created by Ryan on 11/6/2014.
@@ -15,7 +18,6 @@ public class BitmapTriple {
     public int width;
 
     public Bitmap orig;
-
 
 
     public BitmapTriple(Bitmap bitmap) {

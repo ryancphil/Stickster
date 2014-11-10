@@ -60,6 +60,7 @@ public class CanvasView extends View {
     }
 
     public void init() {
+        this.setDrawingCacheEnabled(true);
         mActiveDragPoints = new ArrayList<Point>();
         mItemsCollection = new ArrayList<BitmapTriple>();
 
@@ -72,7 +73,11 @@ public class CanvasView extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.RED);
 
-        //this.setBackground(new BitmapDrawable(getResources(), (Bitmap) null));
+        this.setBackground(new BitmapDrawable(getResources(), (Bitmap) null));
+    }
+
+    public Bitmap get(){
+        return this.getDrawingCache();
     }
 
     @Override

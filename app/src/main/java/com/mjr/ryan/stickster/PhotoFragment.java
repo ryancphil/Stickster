@@ -6,7 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.MediaScannerConnectionClient;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +20,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Ryan on 10/4/2014.
  * this fragment should get inflated when a photo is selected or taken by replacing the CameraFragment in the framelayout
@@ -23,6 +33,7 @@ import android.widget.ImageView;
 public class PhotoFragment extends Fragment{
 
     CanvasView canvasView;
+    FileOutputStream fos = null;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -152,6 +163,38 @@ public class PhotoFragment extends Fragment{
             }
         });
 
+        Button save = (Button) getView().findViewById(R.id.save);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Add imageview to fragment dynamically
+                Log.e("save", "save");
+                // Save Bitmap to File
+                canvasView.invalidate();
+                try {
+                    fos = new FileOutputStream(getOutputMediaFile());
+                    //Bitmap temp = ((MainActivity) context).photo;
+                    Bitmap temp = canvasView.get();
+                    temp.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+                    fos.flush();
+                    fos.close();
+                    fos = null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                            fos = null;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+
         Button flip = (Button) getView().findViewById(R.id.flip);
         flip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +226,33 @@ public class PhotoFragment extends Fragment{
         super.onDestroy();
         Log.e("PhotoFragment", "onDestroy");
         canvasView.destroyDrawingCache();
+    }
+
+    private File getOutputMediaFile(){
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "Stickster");
+
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.e("Camera Guide", "Required media storage does not exist");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                "IMG_"+ timeStamp + ".jpg");
+
+        //mediaFile.mkdir();
+        new SingleMediaScanner(getActivity(), mediaFile);
+
+        //DialogHelper.showDialog( "Success!","Your picture has been saved!",getActivity());
+        Log.e("path location", String.valueOf(mediaFile));
+
+        return mediaFile;
     }
 }
 
