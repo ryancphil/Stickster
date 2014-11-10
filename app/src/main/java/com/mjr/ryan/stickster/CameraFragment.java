@@ -1,13 +1,19 @@
 package com.mjr.ryan.stickster;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -19,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.mjr.ryan.stickster.R;
@@ -86,7 +93,58 @@ public class CameraFragment extends Fragment {
                 }
         );
 
+        Button galleryButton = (Button) view.findViewById(R.id.button_gallery);
+        galleryButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent,0);
+                    }
+                }
+        );
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+            String tempPath = getPath(selectedImageUri, getActivity());
+            BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+
+            WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Bitmap bp = BitmapFactory.decodeFile(tempPath, btmapOptions);
+            bp = Bitmap.createScaledBitmap(bp, display.getHeight(), display.getWidth(), false);
+
+            Matrix matrix = new Matrix();
+            if (bp.getHeight() < bp.getWidth()) {
+                matrix.postRotate(90);
+            }
+            else
+                matrix.postRotate(0);
+
+            ((MainActivity)getActivity()).photo = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(), bp.getHeight(), matrix, true);
+
+            PhotoFragment photoFragment = new PhotoFragment();
+
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.frag_content, photoFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+    public String getPath(Uri uri, Activity activity) {
+        String[] projection = { MediaStore.MediaColumns.DATA };
+        Cursor cursor = activity
+                .managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     /**
