@@ -38,6 +38,11 @@ public class CanvasView extends View {
     public ArrayList<Point> mActiveDragPoints;
     public BitmapTriple selectedBitmap;
 
+    Point touchDown;
+    int tdx;
+    int tdy;
+
+
     public CanvasView(Context context) {
         super(context);
         this.context = context;
@@ -101,19 +106,35 @@ public class CanvasView extends View {
         try {
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    Point touchDown = new Point((int) event.getX(), (int) event.getY());
+                    touchDown = new Point((int) event.getX(), (int) event.getY());
                     lookForIntersection(touchDown);
-
+                    tdx = selectedBitmap.x_position - touchDown.x;
+                    tdy = selectedBitmap.y_position - touchDown.y;
                     break;
                 case MotionEvent.ACTION_UP:
+                    selectedBitmap.previousSet = false;
                     //selectedBitmap = null;
+                    selectedBitmap.previousX = selectedBitmap.x_position;
+                    selectedBitmap.previousY = selectedBitmap.y_position;
                 case MotionEvent.ACTION_CANCEL:
                     mActiveDragPoints.removeAll(mActiveDragPoints);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    touchDown = new Point((int) event.getX(), (int) event.getY());
-                    if(getIntersectionRectIndex(touchDown) != -1 ) {
-                        moveBitmap(touchDown, selectedBitmap);
+                    Point touchMove = new Point((int) event.getX(), (int) event.getY());
+                    Log.e("fixed values", tdx + "    " + tdy);
+                    int tempx = selectedBitmap.previousX - touchMove.x;
+                    int tempy = selectedBitmap.previousY - touchMove.y;
+                    Log.e("distance values", tempx + "    " + tempy);
+                    if (!selectedBitmap.previousSet) {
+                        tempx -= tdx;
+                        tempy -= tdy;
+                        selectedBitmap.previousSet = true;
+                    }
+                    selectedBitmap.previousX = (int)event.getX();
+                    selectedBitmap.previousY = (int)event.getY();
+                    //Point touchMove = new Point((int) event.getX(), (int) event.getY());
+                    if(getIntersectionRectIndex(touchMove) != -1 ) {
+                        moveBitmap(tempx, tempy, selectedBitmap);
                     }
 
                     int numPointers = event.getPointerCount();
@@ -184,11 +205,11 @@ public class CanvasView extends View {
         return index;
     }
 
-    private void moveBitmap(Point currentPoint, final BitmapTriple bitmap)
+    private void moveBitmap(int x, int y, final BitmapTriple bitmap)
     {
         if(bitmap != null) {
-            bitmap.x_position = currentPoint.x;
-            bitmap.y_position = currentPoint.y;
+            bitmap.x_position -= x;
+            bitmap.y_position -= y;
         }
     }
 

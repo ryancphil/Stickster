@@ -19,6 +19,10 @@ public class BitmapTriple {
 
     public Bitmap orig;
 
+    boolean previousSet = false;
+    int previousX = 250;
+    int previousY = 250;
+
 
     public BitmapTriple(Bitmap bitmap) {
         this.bitmap = bitmap;
