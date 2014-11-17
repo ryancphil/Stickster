@@ -108,48 +108,56 @@ public class CanvasView extends View {
                 case MotionEvent.ACTION_DOWN:
                     touchDown = new Point((int) event.getX(), (int) event.getY());
                     lookForIntersection(touchDown);
-                    tdx = selectedBitmap.x_position - touchDown.x;
-                    tdy = selectedBitmap.y_position - touchDown.y;
+                    if (selectedBitmap != null) {
+                        tdx = selectedBitmap.x_position - touchDown.x;
+                        tdy = selectedBitmap.y_position - touchDown.y;
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
-                    selectedBitmap.previousSet = false;
+                    if (selectedBitmap != null){
+                        selectedBitmap.previousSet = false;
                     //selectedBitmap = null;
                     selectedBitmap.previousX = selectedBitmap.x_position;
                     selectedBitmap.previousY = selectedBitmap.y_position;
+                    }
                 case MotionEvent.ACTION_CANCEL:
                     mActiveDragPoints.removeAll(mActiveDragPoints);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    Point touchMove = new Point((int) event.getX(), (int) event.getY());
-                    Log.e("fixed values", tdx + "    " + tdy);
-                    int tempx = selectedBitmap.previousX - touchMove.x;
-                    int tempy = selectedBitmap.previousY - touchMove.y;
-                    Log.e("distance values", tempx + "    " + tempy);
-                    if (!selectedBitmap.previousSet) {
-                        tempx -= tdx;
-                        tempy -= tdy;
-                        selectedBitmap.previousSet = true;
-                    }
-                    selectedBitmap.previousX = (int)event.getX();
-                    selectedBitmap.previousY = (int)event.getY();
-                    //Point touchMove = new Point((int) event.getX(), (int) event.getY());
-                    if(getIntersectionRectIndex(touchMove) != -1 ) {
-                        moveBitmap(tempx, tempy, selectedBitmap);
-                    }
+                    if (selectedBitmap != null) {
+                        Point touchMove = new Point((int) event.getX(), (int) event.getY());
+                        Log.e("fixed values", tdx + "    " + tdy);
+                        int tempx = selectedBitmap.previousX - touchMove.x;
+                        int tempy = selectedBitmap.previousY - touchMove.y;
+                        selectedBitmap.previousX = touchMove.x;
+                        selectedBitmap.previousY = touchMove.y;
 
-                    int numPointers = event.getPointerCount();
-                    for(int i = 0; i < numPointers; i++){
-                        if(i == 1){
-                            float dx = touchDown.x - event.getX(i);
-                            float dy = touchDown.y - event.getY(i);
-
-                            //This code rotates based on location of second finger around the bitmap
-                            degrees = 4 * (int) (Math.toDegrees(Math.atan2(dy, dx)));
+                        Log.e("distance values", tempx + "    " + tempy);
+                        if (!selectedBitmap.previousSet) {
+                            tempx -= tdx;
+                            tempy -= tdy;
+                            selectedBitmap.previousSet = true;
                         }
-                    }
-                    invalidate();
 
-                    break;
+                        //Point touchMove = new Point((int) event.getX(), (int) event.getY());
+                        if (getIntersectionRectIndex(touchMove) != -1) {
+                            moveBitmap(tempx, tempy, selectedBitmap);
+                        }
+
+                        int numPointers = event.getPointerCount();
+                        for (int i = 0; i < numPointers; i++) {
+                            if (i == 1) {
+                                float dx = touchDown.x - event.getX(i);
+                                float dy = touchDown.y - event.getY(i);
+
+                                //This code rotates based on location of second finger around the bitmap
+                                degrees = 4 * (int) (Math.toDegrees(Math.atan2(dy, dx)));
+                            }
+                        }
+                        invalidate();
+
+                        break;
+                    }
                 case MotionEvent.ACTION_POINTER_DOWN:
                     break;
                 case MotionEvent.ACTION_POINTER_UP:

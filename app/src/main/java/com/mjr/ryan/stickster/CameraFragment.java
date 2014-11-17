@@ -49,6 +49,8 @@ public class CameraFragment extends Fragment {
     // Reference to the containing view.
     private View mCameraView;
 
+    FrameLayout preview;
+
     /**
      * Default empty constructor.
      */
@@ -212,7 +214,7 @@ public class CameraFragment extends Fragment {
         qOpened = (mCamera != null);
         if(qOpened == true){
             mPreview = new CameraPreview(getActivity().getBaseContext(), mCamera, getView());
-            FrameLayout preview = (FrameLayout) getView().findViewById(R.id.camera_preview);
+            preview = (FrameLayout) getView().findViewById(R.id.camera_preview);
             preview.addView(mPreview);
             mPreview.startCameraPreview();
         }
@@ -244,6 +246,7 @@ public class CameraFragment extends Fragment {
             mCamera.setPreviewCallback(null);
             mPreview.getHolder().removeCallback(mPreview);
             mCamera.release();
+            preview.removeView(mPreview);
             mCamera = null;
         }
         if(mPreview != null){
