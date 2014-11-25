@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class CanvasView extends View {
     Point touchDown;
     int tdx;
     int tdy;
+    Rect selectionRect = new Rect();
 
 
     public CanvasView(Context context) {
@@ -93,6 +95,12 @@ public class CanvasView extends View {
         canvas.drawBitmap(((MainActivity) context).photo, 0, 0, paint);
         //Draw all bitmaps inside the mItemsCollection array
         for (BitmapTriple bitmap : mItemsCollection) {
+            if(selectedBitmap == bitmap){
+                paint.setStrokeWidth(5);
+                paint.setColor(Color.CYAN);
+                paint.setStyle(Paint.Style.STROKE);
+                canvas.drawRect(selectionRect, paint);
+            }
             //Draw the center of the bitmap at the user's finger
             canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
         }
@@ -111,14 +119,16 @@ public class CanvasView extends View {
                     if (selectedBitmap != null) {
                         tdx = selectedBitmap.x_position - touchDown.x;
                         tdy = selectedBitmap.y_position - touchDown.y;
+
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                     if (selectedBitmap != null){
                         selectedBitmap.previousSet = false;
-                    //selectedBitmap = null;
-                    selectedBitmap.previousX = selectedBitmap.x_position;
-                    selectedBitmap.previousY = selectedBitmap.y_position;
+                        //selectedBitmap = null;
+                        selectedBitmap.previousX = selectedBitmap.x_position;
+                        selectedBitmap.previousY = selectedBitmap.y_position;
+
                     }
                 case MotionEvent.ACTION_CANCEL:
                     mActiveDragPoints.removeAll(mActiveDragPoints);
@@ -126,20 +136,20 @@ public class CanvasView extends View {
                 case MotionEvent.ACTION_MOVE:
                     if (selectedBitmap != null) {
                         Point touchMove = new Point((int) event.getX(), (int) event.getY());
-                        Log.e("fixed values", tdx + "    " + tdy);
+
+                        //Log.e("fixed values", tdx + "    " + tdy);
                         int tempx = selectedBitmap.previousX - touchMove.x;
                         int tempy = selectedBitmap.previousY - touchMove.y;
                         selectedBitmap.previousX = touchMove.x;
                         selectedBitmap.previousY = touchMove.y;
 
-                        Log.e("distance values", tempx + "    " + tempy);
+                        //Log.e("distance values", tempx + "    " + tempy);
                         if (!selectedBitmap.previousSet) {
                             tempx -= tdx;
                             tempy -= tdy;
                             selectedBitmap.previousSet = true;
                         }
 
-                        //Point touchMove = new Point((int) event.getX(), (int) event.getY());
                         if (getIntersectionRectIndex(touchMove) != -1) {
                             moveBitmap(tempx, tempy, selectedBitmap);
                         }
@@ -219,14 +229,21 @@ public class CanvasView extends View {
             bitmap.x_position -= x;
             bitmap.y_position -= y;
         }
+        selectionBox(selectedBitmap);
+    }
+
+    private void selectionBox(BitmapTriple bitmap){
+        selectionRect.set(bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2),bitmap.x_position+bitmap.bitmap.getWidth()/2,
+                bitmap.y_position+bitmap.bitmap.getHeight()/2);
+
+
     }
 
     private void rotateBitmap(int degrees, BitmapTriple bitmap){
-        Matrix matrix = new Matrix();
+        Matrix rotatrix = new Matrix();
+        rotatrix.postRotate(degrees);
 
-        matrix.postRotate(degrees);
-
-        bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), matrix, true);
+        bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), rotatrix, true);
 //        bitmap.orig = Bitmap.createBitmap(bitmap.orig, 0, 0, bitmap.orig.getWidth(), bitmap.orig.getHeight(), matrix, true);
     }
 
@@ -238,10 +255,11 @@ public class CanvasView extends View {
             scaleFactor *= detector.getScaleFactor();
 
             // don't let the object get too small or too large.
-            scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
+            scaleFactor = Math.max(0.2f, Math.min(scaleFactor, 5.0f));
             if(selectedBitmap != null) {
                 selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
-                rotateBitmap(degrees,selectedBitmap);
+                rotateBitmap(degrees, selectedBitmap);
+                selectionBox(selectedBitmap);
             }
             invalidate();
             return true;

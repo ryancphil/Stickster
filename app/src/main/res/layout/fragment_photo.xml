@@ -49,12 +49,18 @@
             android:id="@+id/handle"
 
             android:text="Stickers!"/>
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/content">
             <TableLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:id="@+id/content"
                 android:orientation="vertical"
                 android:background="#80E6E6E6">
+
+
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content">
@@ -71,8 +77,8 @@
                             android:layout_height="100dp"
                             android:layout_weight=".5"
                             android:contentDescription="lightsaber"
-                            android:background="@drawable/lightsaber"
-                            android:id="@+id/lightsaber"/>
+                            android:background="@drawable/lightsaber_blue"
+                            android:id="@+id/lightsaber_blue"/>
 
                         <ImageButton
                             android:layout_width="0dp"
@@ -110,7 +116,287 @@
                             android:background="@drawable/sandwich"
                             android:id="@+id/sandwich"/>
                     </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="acoustic_guitar"
+                            android:background="@drawable/acoustic_guitar"
+                            android:id="@+id/acoustic_guitar"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="electric_guitar"
+                            android:background="@drawable/electric_guitar"
+                            android:id="@+id/electric_guitar"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="aviator_glasses"
+                            android:background="@drawable/aviator_glasses"
+                            android:id="@+id/aviator_glasses"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="hipster_glasses"
+                            android:background="@drawable/hipster_glasses"
+                            android:id="@+id/hipster_glasses"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="beard"
+                            android:background="@drawable/beard"
+                            android:id="@+id/beard"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="beer"
+                            android:background="@drawable/beer"
+                            android:id="@+id/beer"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="biohazard"
+                            android:background="@drawable/biohazard"
+                            android:id="@+id/biohazard"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="cut"
+                            android:background="@drawable/cut"
+                            android:id="@+id/cut"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="door_blood"
+                            android:background="@drawable/door_blood"
+                            android:id="@+id/door_blood"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="explosion"
+                            android:background="@drawable/explosion"
+                            android:id="@+id/explosion"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="glass_bullethole"
+                            android:background="@drawable/glass_bullethole"
+                            android:id="@+id/glass_bullethole"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="metal_bullethole"
+                            android:background="@drawable/metal_bullethole"
+                            android:id="@+id/metal_bullethole"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="handlebar"
+                            android:background="@drawable/handlebar"
+                            android:id="@+id/handlebar"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="heart"
+                            android:background="@drawable/heart"
+                            android:id="@+id/heart"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="irish_hat"
+                            android:background="@drawable/irish_hat"
+                            android:id="@+id/irish_hat"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="kanye"
+                            android:background="@drawable/kanye"
+                            android:id="@+id/kanye"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="sparta"
+                            android:background="@drawable/sparta"
+                            android:id="@+id/sparta"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="lightsaber"
+                            android:background="@drawable/lightsaber_red"
+                            android:id="@+id/lightsaber_red"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="santa_hat"
+                            android:background="@drawable/santa_hat"
+                            android:id="@+id/santa_hat"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="wreath"
+                            android:background="@drawable/wreath"
+                            android:id="@+id/wreath"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="vodka"
+                            android:background="@drawable/vodka"
+                            android:id="@+id/vodka"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="santa_hat"
+                            android:background="@drawable/tattoo"
+                            android:id="@+id/tattoo"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="mustache"
+                            android:background="@drawable/mustache"
+                            android:id="@+id/mustache"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="umbrella"
+                            android:background="@drawable/umbrella"
+                            android:id="@+id/umbrella"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="playboy"
+                            android:background="@drawable/playboy"
+                            android:id="@+id/playboy"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="sword"
+                            android:background="@drawable/sword"
+                            android:id="@+id/sword"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="hair_red"
+                            android:background="@drawable/hair_red"
+                            android:id="@+id/hair_red"/>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="hair_beiber"
+                            android:background="@drawable/hair_beiber"
+                            android:id="@+id/hair_beiber"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="empty"
+                            android:id="@+id/empty1"/>
+
+                        <ImageButton
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight=".5"
+                            android:contentDescription="empty"
+                            android:id="@+id/empty2"/>
+                    </TableRow>
+
             </TableLayout>
+        </ScrollView>
     </SlidingDrawer>
 
 </RelativeLayout>
