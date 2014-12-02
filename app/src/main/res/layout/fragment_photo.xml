@@ -16,23 +16,28 @@
 
     <Button
         android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete"/>
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/delete"/>
 
     <Button
         android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/save"
         android:layout_centerHorizontal="true"/>
 
     <Button
         android:id="@+id/flip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
         android:layout_alignParentRight="true"
-        android:text="Flip"/>
+        android:background="@drawable/flip"/>
 
     <SlidingDrawer
         android:layout_width="fill_parent"
@@ -45,10 +50,9 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:id="@+id/handle"
-
-            android:text="Stickers!"/>
+            android:background="@drawable/drawer"/>
 
         <ScrollView
             android:layout_width="wrap_content"

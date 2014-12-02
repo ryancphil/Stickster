@@ -109,23 +109,22 @@ public class CameraFragment extends Fragment {
 
         final Button flashButton = (Button) view.findViewById(R.id.button_flash);
         flashButton.setTag(0);
-        flashButton.setText("Auto");
         flashButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         final int status =(Integer) v.getTag();
                         if(status == 0) {
-                            flashButton.setText("Off");
+                            flashButton.setBackgroundResource(R.drawable.flash_off);
                             mPreview.setFlash(1);
                             v.setTag(1);
                         }
                         else if (status == 1){
-                            flashButton.setText("On");
+                            flashButton.setBackgroundResource(R.drawable.flash_on);
                             mPreview.setFlash(2);
                             v.setTag(2);
                         }
                         else if (status == 2){
-                            flashButton.setText("Auto");
+                            flashButton.setBackgroundResource(R.drawable.flash_auto);
                             mPreview.setFlash(0);
                             v.setTag(0);
                         }
