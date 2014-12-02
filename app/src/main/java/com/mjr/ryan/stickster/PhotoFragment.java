@@ -633,7 +633,7 @@ public class PhotoFragment extends Fragment{
             try {
                 fos = new FileOutputStream(getOutputMediaFile());
                 //Bitmap temp = ((MainActivity) context).photo;
-                Bitmap temp = canvasView.get();
+                Bitmap temp = canvasView.getDrawingCache();
                 temp.compress(Bitmap.CompressFormat.PNG, 100, fos);
 
                 fos.flush();

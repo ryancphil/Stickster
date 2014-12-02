@@ -95,12 +95,16 @@ public class CanvasView extends View {
         canvas.drawBitmap(((MainActivity) context).photo, 0, 0, paint);
         //Draw all bitmaps inside the mItemsCollection array
         for (BitmapTriple bitmap : mItemsCollection) {
-            if(selectedBitmap == bitmap){
+            if(selectedBitmap == bitmap) {
                 paint.setStrokeWidth(5);
                 paint.setColor(Color.CYAN);
                 paint.setStyle(Paint.Style.STROKE);
                 canvas.drawRect(selectionRect, paint);
+            }else if(selectedBitmap == null){
+                paint.setColor(Color.TRANSPARENT);
+                canvas.drawRect(selectionRect, paint);
             }
+            paint.setColor(Color.CYAN);
             //Draw the center of the bitmap at the user's finger
             canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
         }
@@ -194,6 +198,9 @@ public class CanvasView extends View {
             mActiveDragPoints.add(touchDown);
             selectedBitmap = mItemsCollection.get(index);
             //lastSelected = selectedBitmap;
+        }else{
+            selectedBitmap = null;
+            invalidate();
         }
     }
 
