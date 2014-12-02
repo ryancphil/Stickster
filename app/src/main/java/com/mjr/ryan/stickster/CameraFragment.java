@@ -42,6 +42,7 @@ public class CameraFragment extends Fragment {
 
     // Native camera.
     private Camera mCamera;
+    private static boolean facingFront = false;
 
     // View to display the camera output.
     private CameraPreview mPreview;
@@ -106,6 +107,17 @@ public class CameraFragment extends Fragment {
                     }
                 }
         );
+
+        Button cameraToggle = (Button) view.findViewById(R.id.camera_toggle);
+        cameraToggle.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(Camera.getNumberOfCameras() > 1){
+                    facingFront = !facingFront;
+                    safeCameraOpenInView(null);
+                }
+            }
+        });
 
         final Button flashButton = (Button) view.findViewById(R.id.button_flash);
         flashButton.setTag(0);
@@ -226,12 +238,28 @@ public class CameraFragment extends Fragment {
      */
     public static Camera getCameraInstance(){
         Camera c = null;
-        try {
-            c = Camera.open(); // attempt to get a Camera instance
+
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+
+        for(int cameraID = 0; cameraID < Camera.getNumberOfCameras(); cameraID++){
+            Camera.getCameraInfo(cameraID,cameraInfo);
+            if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK && !facingFront){
+                try{
+                    c = Camera.open(cameraID);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            else if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT && facingFront){
+                try{
+                    c = Camera.open(cameraID);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+
         return c; // returns null if camera is unavailable
     }
 
@@ -274,8 +302,13 @@ public class CameraFragment extends Fragment {
             if (bp.getHeight() < bp.getWidth()) {
                 matrix.postRotate(90);
             }
-            else
+            if(facingFront){
+                matrix.postScale(1,-1);
+                System.out.println("rotated");
+            }
+            else {
                 matrix.postRotate(0);
+            }
 
             ((MainActivity)getActivity()).photo = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(), bp.getHeight(), matrix, true);
 
