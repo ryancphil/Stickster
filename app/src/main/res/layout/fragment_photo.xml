@@ -62,7 +62,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="vertical"
-                android:background="#80E6E6E6">
+                android:background="#80ffffff">
 
 
                     <TableRow

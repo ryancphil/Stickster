@@ -5,16 +5,19 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,7 +33,7 @@ import java.util.Date;
 public class PhotoFragment extends Fragment{
 
     CanvasView canvasView;
-
+    float scale;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class PhotoFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
         Log.e("PhotoFragment", "onCreateView");
+        scale = ((MainActivity)getActivity()).scale;
         return rootView;
     }
 
@@ -537,56 +541,117 @@ public class PhotoFragment extends Fragment{
         });
 
         //Implement button for delete
-        Button delete = (Button) getView().findViewById(R.id.delete);
-        delete.setOnClickListener(new View.OnClickListener() {
+        final Button delete = (Button) getView().findViewById(R.id.delete);
+        delete.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                //Add imageview to fragment dynamically
-                Log.e("delete", "delete");
-                int selectedIndex = canvasView.mItemsCollection.indexOf(canvasView.selectedBitmap);
-                if(canvasView.mItemsCollection.size() > 0 && selectedIndex != -1) {
-                    canvasView.mItemsCollection.remove(selectedIndex);
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) delete.getLayoutParams();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int pixels = (int) (62 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (4 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    lp.leftMargin=pixels;
+                    delete.setLayoutParams(lp);
+                    return true;
                 }
-                canvasView.invalidate();
-            }
-        });
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    int pixels = (int) (50 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (10 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    lp.leftMargin=pixels;
+                    delete.setLayoutParams(lp);
 
-        Button save = (Button) getView().findViewById(R.id.save);
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Add imageview to fragment dynamically
-                Log.e("save", "save");
-                // Save Bitmap to File
-                canvasView.selectionRect.set(0,0,0,0);
-                canvasView.invalidate();
-                //Execute save as an asynctask to stop delay.
-                new SaveTask().execute(canvasView.get());
-            }
-        });
-
-        Button flip = (Button) getView().findViewById(R.id.flip);
-        flip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Add imageview to fragment dynamically
-                Log.e("flip", "flip");
-                if(canvasView.selectedBitmap != null) {
-                    Matrix m = new Matrix();
-                    m.preScale(-1, 1);
-                    Bitmap src = canvasView.selectedBitmap.bitmap;
-                    Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, false);
-                    dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    canvasView.selectedBitmap.bitmap = dst;
-
-                    //flip origin image as well for scaling
-                    Bitmap src2 = canvasView.selectedBitmap.orig;
-                    Bitmap dst2 = Bitmap.createBitmap(src2, 0, 0, src2.getWidth(), src2.getHeight(), m, false);
-                    dst2.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    canvasView.selectedBitmap.orig = dst2;
-
+                    Log.e("delete", "delete");
+                    int selectedIndex = canvasView.mItemsCollection.indexOf(canvasView.selectedBitmap);
+                    if(canvasView.mItemsCollection.size() > 0 && selectedIndex != -1) {
+                        canvasView.mItemsCollection.remove(selectedIndex);
+                    }
                     canvasView.invalidate();
+                    return true;
                 }
+                return false;
+            }
+        });
+
+        final Button save = (Button) getView().findViewById(R.id.save);
+        save.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) save.getLayoutParams();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int pixels = (int) (62 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (4 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    save.setLayoutParams(lp);
+                    return true;
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    canvasView.selectionRect.set(0,0,0,0);
+                    canvasView.invalidate();
+                    //Execute save as an asynctask to stop delay.
+                    Toast.makeText((getActivity()).getApplicationContext(), "Saving...", Toast.LENGTH_SHORT).show();
+                    new SaveTask().execute(canvasView.get());
+                    int pixels = (int) (50 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (10 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    save.setLayoutParams(lp);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final Button flip = (Button) getView().findViewById(R.id.flip);
+        flip.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) flip.getLayoutParams();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int pixels = (int) (62 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (4 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    lp.rightMargin=pixels;
+                    flip.setLayoutParams(lp);
+                    return true;
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    int pixels = (int) (50 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (10 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    lp.rightMargin=pixels;
+                    flip.setLayoutParams(lp);
+
+                    if(canvasView.selectedBitmap != null) {
+                        Matrix m = new Matrix();
+                        m.preScale(-1, 1);
+                        Bitmap src = canvasView.selectedBitmap.bitmap;
+                        Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, false);
+                        dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+                        canvasView.selectedBitmap.bitmap = dst;
+
+                        //flip origin image as well for scaling
+                        Bitmap src2 = canvasView.selectedBitmap.orig;
+                        Bitmap dst2 = Bitmap.createBitmap(src2, 0, 0, src2.getWidth(), src2.getHeight(), m, false);
+                        dst2.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+                        canvasView.selectedBitmap.orig = dst2;
+
+                        canvasView.invalidate();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
     }

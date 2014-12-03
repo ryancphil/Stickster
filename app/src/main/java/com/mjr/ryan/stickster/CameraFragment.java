@@ -14,9 +14,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,6 +28,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.mjr.ryan.stickster.R;
@@ -39,6 +42,8 @@ import java.util.Date;
 import java.util.List;
 
 public class CameraFragment extends Fragment {
+
+    float scale;
 
     // Native camera.
     private Camera mCamera;
@@ -83,39 +88,101 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        scale = ((MainActivity)getActivity()).scale;
 
         // Trap the capture button.
-        Button captureButton = (Button) view.findViewById(R.id.button_capture);
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // get an image from the camera
-                        mCamera.takePicture(null, null, mPicture);
-                    }
-                }
-        );
-
-        Button galleryButton = (Button) view.findViewById(R.id.button_gallery);
-        galleryButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_PICK,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(intent,0);
-                    }
-                }
-        );
-
-        Button cameraToggle = (Button) view.findViewById(R.id.camera_toggle);
-        cameraToggle.setOnClickListener(new View.OnClickListener(){
+        final Button captureButton = (Button) view.findViewById(R.id.button_capture);;
+        captureButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                if(Camera.getNumberOfCameras() > 1){
-                    facingFront = !facingFront;
-                    safeCameraOpenInView(null);
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) captureButton.getLayoutParams();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int pixels = (int) (110 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (0 * scale + 0.5f);
+                    lp.bottomMargin=pixels;
+                    captureButton.setLayoutParams(lp);
+                    return true;
                 }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    int pixels = (int) (100 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (5 * scale + 0.5f);
+                    lp.bottomMargin=pixels;
+                    captureButton.setLayoutParams(lp);
+
+                    mCamera.takePicture(null, null, mPicture);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final Button galleryButton = (Button) view.findViewById(R.id.button_gallery);
+        galleryButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) galleryButton.getLayoutParams();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int pixels = (int) (62 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (19 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    lp.rightMargin=pixels;
+                    galleryButton.setLayoutParams(lp);
+                    return true;
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    int pixels = (int) (50 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (25 * scale + 0.5f);
+                    lp.topMargin=pixels;
+                    lp.rightMargin=pixels;
+                    galleryButton.setLayoutParams(lp);
+
+                    Intent intent = new Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent,0);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        final Button cameraToggle = (Button) view.findViewById(R.id.camera_toggle);
+        cameraToggle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) cameraToggle.getLayoutParams();
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    int pixels = (int) (62 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (19 * scale + 0.5f);
+                    lp.leftMargin=pixels;
+                    lp.bottomMargin=pixels;
+                    cameraToggle.setLayoutParams(lp);
+                    return true;
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    int pixels = (int) (50 * scale + 0.5f);
+                    lp.width=pixels;
+                    lp.height=pixels;
+                    pixels = (int) (25 * scale + 0.5f);
+                    lp.leftMargin=pixels;
+                    lp.bottomMargin=pixels;
+                    cameraToggle.setLayoutParams(lp);
+                    if(Camera.getNumberOfCameras() > 1){
+                        facingFront = !facingFront;
+                        safeCameraOpenInView(null);
+                    }
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -190,9 +257,6 @@ public class CameraFragment extends Fragment {
                 bp = Bitmap.createScaledBitmap(bp, display.getWidth(), display.getHeight(), false);
             }
 
-
-
-
             ((MainActivity)getActivity()).photo = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(), bp.getHeight(), matrix, true);
 
             PhotoFragment photoFragment = new PhotoFragment();
@@ -212,11 +276,6 @@ public class CameraFragment extends Fragment {
         return cursor.getString(column_index);
     }
 
-    /**
-     * Recommended "safe" way to open the camera.
-     * @param view
-     * @return
-     */
     private boolean safeCameraOpenInView(View view) {
         boolean qOpened = false;
         releaseCameraAndPreview();

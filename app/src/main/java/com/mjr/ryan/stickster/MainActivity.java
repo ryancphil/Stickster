@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +29,9 @@ import java.io.IOException;
 
 public class MainActivity extends Activity {
     public Bitmap photo;
-
+    //DisplayMetrics metrics = getResources().getDisplayMetrics();
+    float scale; //= getResources().getDisplayMetrics().density;
+    DisplayMetrics metrics = new DisplayMetrics();
 
 
     @Override
@@ -36,6 +40,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         CameraFragment cameraFragment = new CameraFragment();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        scale = metrics.density;
+
+        Log.e("scale", Float.toString(scale));
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.frag_content, cameraFragment);
