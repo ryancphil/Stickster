@@ -313,11 +313,11 @@ public class CameraFragment extends Fragment {
             ((MainActivity)getActivity()).photo = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(), bp.getHeight(), matrix, true);
 
             if(bp==null){
-                Toast.makeText((getActivity()).getApplicationContext(), "not taken", Toast.LENGTH_SHORT).show();
+                Toast.makeText((getActivity()).getApplicationContext(), "Not Captured", Toast.LENGTH_SHORT).show();
             }
             else
             {
-                Toast.makeText((getActivity()).getApplicationContext(), "taken", Toast.LENGTH_SHORT).show();
+                Toast.makeText((getActivity()).getApplicationContext(), "Captured", Toast.LENGTH_SHORT).show();
             }
             //cameraObject.release();
             PhotoFragment photoFragment = new PhotoFragment();

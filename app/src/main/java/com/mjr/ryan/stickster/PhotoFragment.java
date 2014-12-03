@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -560,7 +561,7 @@ public class PhotoFragment extends Fragment{
                 canvasView.selectionRect.set(0,0,0,0);
                 canvasView.invalidate();
                 //Execute save as an asynctask to stop delay.
-                new SaveTask().execute();
+                new SaveTask().execute(canvasView.get());
             }
         });
 
@@ -598,7 +599,7 @@ public class PhotoFragment extends Fragment{
     }
 
 
-    public class SaveTask extends AsyncTask<Void,Void,Void> {
+    public class SaveTask extends AsyncTask<Bitmap,Void,Boolean> {
 
         private File getOutputMediaFile() {
 
@@ -628,17 +629,18 @@ public class PhotoFragment extends Fragment{
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Bitmap... params) {
+            boolean success = false;
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(getOutputMediaFile());
-                //Bitmap temp = ((MainActivity) context).photo;
-                Bitmap temp = canvasView.getDrawingCache();
+                Bitmap temp = params[0];
                 temp.compress(Bitmap.CompressFormat.PNG, 100, fos);
 
                 fos.flush();
                 fos.close();
                 fos = null;
+                success = true;
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -651,7 +653,16 @@ public class PhotoFragment extends Fragment{
                     }
                 }
             }
-            return null;
+            return success;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success)
+                Toast.makeText((getActivity()).getApplicationContext(), "Save Successful", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText((getActivity()).getApplicationContext(), "Save Failed", Toast.LENGTH_SHORT).show();
+
         }
     }
 }
