@@ -30,8 +30,11 @@ public class CanvasView extends View {
     Context context;
     int index;
 
+    Matrix rotatrix = new Matrix();
+
     private float scaleFactor = 1.0f;
     private int degrees = 0;
+    private int prevRotation = 0;
     private ScaleGestureDetector scaleGestureDetector;
 
     //Keeping track of bitmaps being drawn
@@ -42,6 +45,7 @@ public class CanvasView extends View {
     Point touchDown;
     int tdx;
     int tdy;
+    float sdy,sdx;
     Rect selectionRect = new Rect();
 
 
@@ -106,7 +110,13 @@ public class CanvasView extends View {
             }
             paint.setColor(Color.CYAN);
             //Draw the center of the bitmap at the user's finger
-            canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
+            //canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
+            rotatrix.setRotate(degrees,bitmap.bitmap.getWidth()/2,bitmap.bitmap.getHeight()/2);
+            rotatrix.postScale(scaleFactor, scaleFactor, bitmap.bitmap.getWidth() / 2, bitmap.bitmap.getHeight() / 2);
+            rotatrix.postTranslate(bitmap.x_position - (bitmap.bitmap.getWidth()/2),bitmap.y_position - (bitmap.bitmap.getHeight()/2));
+
+            canvas.drawBitmap(bitmap.bitmap, rotatrix, paint);
+            rotatrix.reset();
         }
         canvas.restore();
     }
@@ -163,9 +173,14 @@ public class CanvasView extends View {
                             if (i == 1) {
                                 float dx = touchDown.x - event.getX(i);
                                 float dy = touchDown.y - event.getY(i);
+                                if (dx != sdx && dy != sdy) {
+                                    //This code rotates based on location of second finger around the bitmap
+                                    int rotationFactor = ((int) ((Math.toDegrees(Math.atan2(dy, dx))) - (Math.toDegrees(Math.atan2(sdy, sdx)))));
+                                    degrees = (10 * rotationFactor )+ prevRotation;
+                                    //prevRotation = degrees;
+                                    Log.i("Degree Check", "Gesture Degree: " + rotationFactor + "\tDegrees: " + degrees);
 
-                                //This code rotates based on location of second finger around the bitmap
-                                degrees = 4 * (int) (Math.toDegrees(Math.atan2(dy, dx)));
+                                }
                             }
                         }
                         invalidate();
@@ -173,8 +188,11 @@ public class CanvasView extends View {
                         break;
                     }
                 case MotionEvent.ACTION_POINTER_DOWN:
+                    sdx = touchDown.x - event.getX(1);
+                    sdy = touchDown.y - event.getY(1);
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
+                    prevRotation = degrees;
                     break;
                 default:
                     break;
@@ -247,10 +265,10 @@ public class CanvasView extends View {
     }
 
     private void rotateBitmap(int degrees, BitmapTriple bitmap){
-        Matrix rotatrix = new Matrix();
-        rotatrix.postRotate(degrees);
+        //Matrix rotatrix = new Matrix();
+        //rotatrix.setRotate(degrees,bitmap.bitmap.getWidth()/2,bitmap.bitmap.getHeight()/2);
 
-        bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), rotatrix, true);
+        //bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), rotatrix, true);
 //        bitmap.orig = Bitmap.createBitmap(bitmap.orig, 0, 0, bitmap.orig.getWidth(), bitmap.orig.getHeight(), matrix, true);
     }
 
@@ -264,7 +282,9 @@ public class CanvasView extends View {
             // don't let the object get too small or too large.
             scaleFactor = Math.max(0.2f, Math.min(scaleFactor, 5.0f));
             if(selectedBitmap != null) {
-                selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
+
+                //rotatrix.setScale(scaleFactor,scaleFactor);
+                //selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
                 rotateBitmap(degrees, selectedBitmap);
                 selectionBox(selectedBitmap);
             }

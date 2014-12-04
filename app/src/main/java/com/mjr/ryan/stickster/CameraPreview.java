@@ -175,6 +175,8 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         if (mSupportedPreviewSizes != null){
             mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
         }
+
+
     }
 
     /**
