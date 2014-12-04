@@ -163,7 +163,7 @@ public class CameraFragment extends Fragment {
                     lp.width=pixels;
                     lp.height=pixels;
                     pixels = (int) (19 * scale + 0.5f);
-                    lp.leftMargin=pixels;
+                    lp.rightMargin=pixels;
                     lp.bottomMargin=pixels;
                     cameraToggle.setLayoutParams(lp);
                     return true;
@@ -173,7 +173,7 @@ public class CameraFragment extends Fragment {
                     lp.width=pixels;
                     lp.height=pixels;
                     pixels = (int) (25 * scale + 0.5f);
-                    lp.leftMargin=pixels;
+                    lp.rightMargin=pixels;
                     lp.bottomMargin=pixels;
                     cameraToggle.setLayoutParams(lp);
                     if(Camera.getNumberOfCameras() > 1){
