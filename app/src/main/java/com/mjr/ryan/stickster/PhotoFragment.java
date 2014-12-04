@@ -1,7 +1,9 @@
 package com.mjr.ryan.stickster;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -548,26 +551,25 @@ public class PhotoFragment extends Fragment{
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) delete.getLayoutParams();
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     int pixels = (int) (62 * scale + 0.5f);
-                    lp.width=pixels;
-                    lp.height=pixels;
+                    lp.width = pixels;
+                    lp.height = pixels;
                     pixels = (int) (4 * scale + 0.5f);
-                    lp.topMargin=pixels;
-                    lp.leftMargin=pixels;
+                    lp.topMargin = pixels;
+                    lp.leftMargin = pixels;
                     delete.setLayoutParams(lp);
                     return true;
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     int pixels = (int) (50 * scale + 0.5f);
-                    lp.width=pixels;
-                    lp.height=pixels;
+                    lp.width = pixels;
+                    lp.height = pixels;
                     pixels = (int) (10 * scale + 0.5f);
-                    lp.topMargin=pixels;
-                    lp.leftMargin=pixels;
+                    lp.topMargin = pixels;
+                    lp.leftMargin = pixels;
                     delete.setLayoutParams(lp);
 
                     Log.e("delete", "delete");
                     int selectedIndex = canvasView.mItemsCollection.indexOf(canvasView.selectedBitmap);
-                    if(canvasView.mItemsCollection.size() > 0 && selectedIndex != -1) {
+                    if (canvasView.mItemsCollection.size() > 0 && selectedIndex != -1) {
                         canvasView.mItemsCollection.remove(selectedIndex);
                     }
                     canvasView.invalidate();
@@ -584,24 +586,23 @@ public class PhotoFragment extends Fragment{
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) save.getLayoutParams();
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     int pixels = (int) (62 * scale + 0.5f);
-                    lp.width=pixels;
-                    lp.height=pixels;
+                    lp.width = pixels;
+                    lp.height = pixels;
                     pixels = (int) (4 * scale + 0.5f);
-                    lp.topMargin=pixels;
+                    lp.topMargin = pixels;
                     save.setLayoutParams(lp);
                     return true;
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    canvasView.selectionRect.set(0,0,0,0);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    canvasView.selectionRect.set(0, 0, 0, 0);
                     canvasView.invalidate();
                     //Execute save as an asynctask to stop delay.
                     Toast.makeText((getActivity()).getApplicationContext(), "Saving...", Toast.LENGTH_SHORT).show();
                     new SaveTask().execute(canvasView.get());
                     int pixels = (int) (50 * scale + 0.5f);
-                    lp.width=pixels;
-                    lp.height=pixels;
+                    lp.width = pixels;
+                    lp.height = pixels;
                     pixels = (int) (10 * scale + 0.5f);
-                    lp.topMargin=pixels;
+                    lp.topMargin = pixels;
                     save.setLayoutParams(lp);
                     return true;
                 }
@@ -616,24 +617,23 @@ public class PhotoFragment extends Fragment{
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) flip.getLayoutParams();
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     int pixels = (int) (62 * scale + 0.5f);
-                    lp.width=pixels;
-                    lp.height=pixels;
+                    lp.width = pixels;
+                    lp.height = pixels;
                     pixels = (int) (4 * scale + 0.5f);
-                    lp.topMargin=pixels;
-                    lp.rightMargin=pixels;
+                    lp.topMargin = pixels;
+                    lp.rightMargin = pixels;
                     flip.setLayoutParams(lp);
                     return true;
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     int pixels = (int) (50 * scale + 0.5f);
-                    lp.width=pixels;
-                    lp.height=pixels;
+                    lp.width = pixels;
+                    lp.height = pixels;
                     pixels = (int) (10 * scale + 0.5f);
-                    lp.topMargin=pixels;
-                    lp.rightMargin=pixels;
+                    lp.topMargin = pixels;
+                    lp.rightMargin = pixels;
                     flip.setLayoutParams(lp);
 
-                    if(canvasView.selectedBitmap != null) {
+                    if (canvasView.selectedBitmap != null) {
                         Matrix m = new Matrix();
                         m.preScale(-1, 1);
                         Bitmap src = canvasView.selectedBitmap.bitmap;
@@ -652,6 +652,40 @@ public class PhotoFragment extends Fragment{
                     return true;
                 }
                 return false;
+            }
+        });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        //setKeyListener(getView());
+    }
+
+    public void setKeyListener(View v){
+        v.setFocusableInTouchMode(true);
+        v.requestFocus();
+        v.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_BACK){
+                        new AlertDialog.Builder(getActivity())
+                        .setMessage("Are you sure you want to leave your work?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        CameraFragment cameraFragment = new CameraFragment();
+                                        getFragmentManager().beginTransaction()
+                                                .replace(R.id.frag_content, cameraFragment)
+                                                .addToBackStack(null)
+                                                .commit();
+                                    }
+                                })
+                        .setNegativeButton("Cancel", null)
+                        .create().show();
+                    }
+
+                return true;
             }
         });
     }

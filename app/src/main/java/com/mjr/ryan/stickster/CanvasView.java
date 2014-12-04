@@ -110,13 +110,16 @@ public class CanvasView extends View {
             }
             paint.setColor(Color.CYAN);
             //Draw the center of the bitmap at the user's finger
-            //canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
+            canvas.drawBitmap(bitmap.bitmap, bitmap.x_position - (bitmap.bitmap.getWidth()/2), bitmap.y_position - (bitmap.bitmap.getHeight()/2), paint);
+            /*
             rotatrix.setRotate(degrees,bitmap.bitmap.getWidth()/2,bitmap.bitmap.getHeight()/2);
             rotatrix.postScale(scaleFactor, scaleFactor, bitmap.bitmap.getWidth() / 2, bitmap.bitmap.getHeight() / 2);
             rotatrix.postTranslate(bitmap.x_position - (bitmap.bitmap.getWidth()/2),bitmap.y_position - (bitmap.bitmap.getHeight()/2));
 
             canvas.drawBitmap(bitmap.bitmap, rotatrix, paint);
+
             rotatrix.reset();
+            */
         }
         canvas.restore();
     }
@@ -177,7 +180,6 @@ public class CanvasView extends View {
                                     //This code rotates based on location of second finger around the bitmap
                                     int rotationFactor = ((int) ((Math.toDegrees(Math.atan2(dy, dx))) - (Math.toDegrees(Math.atan2(sdy, sdx)))));
                                     degrees = (10 * rotationFactor )+ prevRotation;
-                                    //prevRotation = degrees;
                                     Log.i("Degree Check", "Gesture Degree: " + rotationFactor + "\tDegrees: " + degrees);
 
                                 }
@@ -266,9 +268,9 @@ public class CanvasView extends View {
 
     private void rotateBitmap(int degrees, BitmapTriple bitmap){
         //Matrix rotatrix = new Matrix();
-        //rotatrix.setRotate(degrees,bitmap.bitmap.getWidth()/2,bitmap.bitmap.getHeight()/2);
+        rotatrix.setRotate(degrees,bitmap.bitmap.getWidth()/2,bitmap.bitmap.getHeight()/2);
 
-        //bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), rotatrix, true);
+        bitmap.bitmap = Bitmap.createBitmap(bitmap.bitmap , 0, 0, bitmap.bitmap.getWidth(), bitmap.bitmap.getHeight(), rotatrix, true);
 //        bitmap.orig = Bitmap.createBitmap(bitmap.orig, 0, 0, bitmap.orig.getWidth(), bitmap.orig.getHeight(), matrix, true);
     }
 
@@ -284,7 +286,7 @@ public class CanvasView extends View {
             if(selectedBitmap != null) {
 
                 //rotatrix.setScale(scaleFactor,scaleFactor);
-                //selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
+                selectedBitmap.bitmap = Bitmap.createScaledBitmap(selectedBitmap.orig, (int) (selectedBitmap.width * scaleFactor), (int)(selectedBitmap.height * scaleFactor), false);
                 rotateBitmap(degrees, selectedBitmap);
                 selectionBox(selectedBitmap);
             }

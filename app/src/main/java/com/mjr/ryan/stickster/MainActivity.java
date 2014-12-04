@@ -1,8 +1,12 @@
 package com.mjr.ryan.stickster;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +19,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,7 +61,34 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        FragmentManager manager = getFragmentManager();
+        if(manager != null){
+            if(manager.getBackStackEntryCount()>0){
+                Fragment currentFragment = manager.findFragmentById(R.id.frag_content);
+                //Log.i("Fragment","Fragment Name: " + (manager.getBackStackEntryAt(manager.getBackStackEntryCount()-1).getName()));
+                if(currentFragment.getClass() == PhotoFragment.class){
+                    new AlertDialog.Builder(this)
+                            .setMessage("Are you sure you want to leave your work?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    CameraFragment cameraFragment = new CameraFragment();
+                                    getFragmentManager().beginTransaction()
+                                            .replace(R.id.frag_content, cameraFragment)
+                                            .addToBackStack(null)
+                                            .commit();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create().show();
+                }
+                else finish();
+            }
+            else finish();
+        }
+    }
 
     public Bitmap getPhoto(){
         return this.photo;
