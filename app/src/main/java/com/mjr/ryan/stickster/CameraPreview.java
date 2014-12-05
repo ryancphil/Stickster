@@ -31,17 +31,19 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     // Flash modes supported by this camera
     private List<String> mSupportedFlashModes;
+    private static int flashMode = 1;
 
     // View holding this camera.
     private View mCameraView;
 
-    public CameraPreview(Context context, Camera camera, View cameraView) {
+    public CameraPreview(Context context, Camera camera, View cameraView, int mode) {
         super(context);
 
         // Capture the context
         mCameraView = cameraView;
         mContext = context;
         setCamera(camera);
+        flashMode = mode;
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -77,12 +79,20 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
         mSupportedFlashModes = mCamera.getParameters().getSupportedFlashModes();
 
-        // Set the camera to Auto Flash mode.
-        if (mSupportedFlashModes != null && mSupportedFlashModes.contains(Camera.Parameters.FLASH_MODE_AUTO)){
-            Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
-            mCamera.setParameters(parameters);
+        // Set the camera to Flash off mode initially, or whichever mode was used last
+        Camera.Parameters parameters = mCamera.getParameters();
+        if(mSupportedFlashModes != null){
+            if (flashMode == 1 && mSupportedFlashModes.contains(Camera.Parameters.FLASH_MODE_OFF)){
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
+            else if(flashMode == 2 && mSupportedFlashModes.contains(Camera.Parameters.FLASH_MODE_ON)){
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            }
+            else if(flashMode == 0 && mSupportedFlashModes.contains(Camera.Parameters.FLASH_MODE_AUTO)){
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+            }
         }
+        mCamera.setParameters(parameters);
 
         requestLayout();
     }
@@ -91,14 +101,21 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
         Camera.Parameters parameters = mCamera.getParameters();
         if (mode == 0) {
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+            flashMode = 0;
         }
         else if (mode == 1) {
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            flashMode = 1;
         }
         else if (mode == 2) {
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            flashMode = 2;
         }
         mCamera.setParameters(parameters);
+    }
+
+    public int getFlashMode(){
+        return flashMode;
     }
 
     /**

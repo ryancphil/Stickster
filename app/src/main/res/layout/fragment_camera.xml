@@ -42,7 +42,7 @@
 
         <Button
             android:id="@+id/button_flash"
-            android:background="@drawable/flash_auto"
+            android:background="@drawable/flash_off"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginLeft="25dp"

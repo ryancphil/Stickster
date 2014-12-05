@@ -48,6 +48,7 @@ public class CameraFragment extends Fragment {
     // Native camera.
     private Camera mCamera;
     private static boolean facingFront = false;
+    private static int flashMode = 1;
 
     // View to display the camera output.
     private CameraPreview mPreview;
@@ -187,7 +188,16 @@ public class CameraFragment extends Fragment {
         });
 
         final Button flashButton = (Button) view.findViewById(R.id.button_flash);
-        flashButton.setTag(0);
+        flashButton.setTag(flashMode);
+        if(flashMode == 0){
+            flashButton.setBackgroundResource(R.drawable.flash_auto);
+        }
+        else if(flashMode == 1){
+            flashButton.setBackgroundResource(R.drawable.flash_off);
+        }
+        else {
+            flashButton.setBackgroundResource(R.drawable.flash_on);
+        }
         flashButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -195,16 +205,19 @@ public class CameraFragment extends Fragment {
                         if(status == 0) {
                             flashButton.setBackgroundResource(R.drawable.flash_off);
                             mPreview.setFlash(1);
+                            flashMode = 1;
                             v.setTag(1);
                         }
                         else if (status == 1){
                             flashButton.setBackgroundResource(R.drawable.flash_on);
                             mPreview.setFlash(2);
+                            flashMode = 2;
                             v.setTag(2);
                         }
                         else if (status == 2){
                             flashButton.setBackgroundResource(R.drawable.flash_auto);
                             mPreview.setFlash(0);
+                            flashMode = 0;
                             v.setTag(0);
                         }
 
@@ -283,7 +296,7 @@ public class CameraFragment extends Fragment {
         mCameraView = view;
         qOpened = (mCamera != null);
         if(qOpened == true){
-            mPreview = new CameraPreview(getActivity().getBaseContext(), mCamera, getView());
+            mPreview = new CameraPreview(getActivity().getBaseContext(), mCamera, getView(), flashMode);
             preview = (FrameLayout) getView().findViewById(R.id.camera_preview);
             preview.addView(mPreview);
             mPreview.startCameraPreview();
