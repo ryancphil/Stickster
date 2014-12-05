@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -114,7 +115,16 @@ public class CameraFragment extends Fragment {
                     lp.bottomMargin=pixels;
                     captureButton.setLayoutParams(lp);
 
+                    if(facingFront && flashMode == 2){
+                        FrontFlashFragment flashFragment = new FrontFlashFragment();
+
+                        getFragmentManager().beginTransaction()
+                                .add(R.id.frag_content,flashFragment)
+                                .commit();
+                    }
+
                     mCamera.takePicture(null, null, mPicture);
+
                     return true;
                 }
                 return false;
@@ -361,7 +371,7 @@ public class CameraFragment extends Fragment {
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-
+            Log.i("Reached","On Picture Taken");
             Bitmap bp = BitmapFactory.decodeByteArray(data, 0, data.length);
 
             Log.e("PictureDimensions", "Picture Height: " + bp.getHeight() + "\tWidth: " + bp.getWidth());
