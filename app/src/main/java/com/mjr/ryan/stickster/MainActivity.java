@@ -69,8 +69,9 @@ public class MainActivity extends Activity {
                 Fragment currentFragment = manager.findFragmentById(R.id.frag_content);
                 //Log.i("Fragment","Fragment Name: " + (manager.getBackStackEntryAt(manager.getBackStackEntryCount()-1).getName()));
                 if(currentFragment.getClass() == PhotoFragment.class){
+
                     new AlertDialog.Builder(this)
-                            .setMessage("Are you sure you want to leave your work?")
+                            .setMessage("Are you sure you want to go back?")
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {

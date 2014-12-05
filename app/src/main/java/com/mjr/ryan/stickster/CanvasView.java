@@ -179,8 +179,8 @@ public class CanvasView extends View {
                                 if (dx != sdx && dy != sdy) {
                                     //This code rotates based on location of second finger around the bitmap
                                     int rotationFactor = ((int) ((Math.toDegrees(Math.atan2(dy, dx))) - (Math.toDegrees(Math.atan2(sdy, sdx)))));
-                                    degrees = (10 * rotationFactor )+ prevRotation;
-                                    Log.i("Degree Check", "Gesture Degree: " + rotationFactor + "\tDegrees: " + degrees);
+                                    degrees = (6 * rotationFactor )+ prevRotation;
+                                    //Log.i("Degree Check", "Gesture Degree: " + rotationFactor + "\tDegrees: " + degrees);
 
                                 }
                             }
